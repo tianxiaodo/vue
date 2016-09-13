@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>vue demo sort</title>
+	<script  src="./vue.js"></script>
+	<script src="./jquery-1.9.1.js"></script>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		html,body{
+			width: 100%;
+		}
+		ul{
+			list-style: none;
+			display: block;
+			width: 400px;
+			margin: 30px auto;
+			
+		}
+		ul li{
+			display: block;
+			width: 400px;
+			height:50px;
+			position:relative;
+		    background-color: #f8f8f8;
+		    box-sizing:border-box;
+		    border-bottom: 1px solid #B3AEAE;
+
+		}
+		ul .head{
+			background-color: #B3AEAE;
+		}
+		ul li span{
+			display: block;
+			width:25%;
+			height:100%;
+			text-align: center;
+			line-height: 50px;
+			float: left;
+		}
+	</style>
+</head>
+<body>
+	<div id='contant'>
+		<ul>
+			<li  v-on:click.prevent.stop="sort" class='head'>
+				<span class='name'	 >名字</span>
+				<span class='age'	 >年龄</span>
+				<span class='sex'	 >性别</span>
+				<span class='id'	 >id</span>
+			</li>
+			<li v-for="stu in list" class='content'>
+				<span class='name'>					{{stu.name}} 	</span>
+				<span class='age'>					{{stu.age}} 	</span>
+				<span class='sex'>	{{stu.sex?'男':'女'}}</span>
+				<span class='id' @click.prevent.stop="showId(stu.id,$event)" v-bind:data-id="stu.id"> 	{{stu.id | addBegin 'uid' | reverse  }} 	</span>
+			</li>
+		</ul>
+		
+	</div>
+</body>
+
+<script>
+	var dataA={};
+		dataA.list=[];
+
+	for(let i=0;i<5;i++){
+
+		let obj={};
+		let r=parseInt(Math.random()*1000000)+"";
+
+		obj['name']	=	"张"+r.substr(0,2);
+		obj['age']	=	+r.substr(0,2);
+		obj['sex']	=	r.substr(0,1)%2;
+		obj['id']	=	+r;
+
+		dataA.list.push(obj);
+
+	}
+	
+
+//=================== 过滤器 ====================//
+	Vue.filter("addBegin",function(str,bStr){
+		return bStr+str;
+	});
+	Vue.filter("reverse",function(str){
+		return str.toString().split('').reverse().join("");
+	})
+
+
+	var V=new Vue({
+	  el: '#contant',
+	  data: dataA,
+	  methods: {
+	    showId: function (id,event) {
+	      	alert(id);
+	    },
+		sort:function(e){
+			var className=$(e.target).attr("class");
+
+				let sign=$(e.target).attr("sort")?true:false;
+				dataA.list.sort(function(a,b){
+					if(sign){
+						return a[className]-b[className];	
+					}
+					else{
+						return b[className]-a[className];		
+					}
+				});
+				$(e.target).attr("sort",sign?"":true);
+		}
+
+	  }
+	})
+	
+</script>
+
+</html>
